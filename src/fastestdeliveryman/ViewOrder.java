@@ -6,8 +6,8 @@
 package fastestdeliveryman;
 
 import java.util.ArrayList;
-import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -21,34 +21,62 @@ public class ViewOrder extends javax.swing.JFrame {
     public ViewOrder() {
         initComponents();
         ShowOrder();
+        ShowCustomer();
     }
-   
-    private ArrayList<Order> getOrdersList() {
+  
+    private ArrayList<Order> getOrderList() {
         ArrayList<Order> allOrder = new ArrayList<Order>();
-        allOrder.add(new Order("0001", "Nasi Lemak", 5, ""));
-        allOrder.add(new Order("0002", "Chicken Rice", 1, ""));
-        allOrder.add(new Order("0003", "TomYam", 2, ""));
+        allOrder.add(new Order("0001", "Nasi Lemak", 5, "", "Alex"));
+        allOrder.add(new Order("0002", "Chicken Rice", 1, "","Alex"));
+        allOrder.add(new Order("0003", "TomYam", 2, "","Bob"));
         return allOrder;
+    }
+    
+    private ArrayList<Customer> getCustomerList(){
+        ArrayList<Customer> allCustomer = new ArrayList<Customer>();
+        allCustomer.add(new Customer("Alex",2));
+        allCustomer.add(new Customer("Bob",1));
+        return allCustomer;
     }
 
     public void ShowOrder()
    {
-       ArrayList<Order> allOrder = getOrdersList();
+       ArrayList<Order> OrderList = getOrderList();
 
        DefaultTableModel model = (DefaultTableModel)jTable_ViewOrder.getModel();
 
-       Object[] row = new Object[4];
-       for(int i = 0; i < allOrder.size(); i++)
+       Object[] row = new Object[5];
+       
+       for(int i = 0; i < OrderList.size(); i++)
        {
-           row[0] = allOrder.get(i).getId();
-           row[1] = allOrder.get(i).getItem();
-           row[2] = allOrder.get(i).getQuantity();
-           row[3] = allOrder.get(i).getStatus();
+           
+           row[0] = OrderList.get(i).getId();
+           row[1] = OrderList.get(i).getItem();
+           row[2] = OrderList.get(i).getQuantity();
+           row[4] = OrderList.get(i).getCname();
            
            model.addRow(row);
+           
        }
     }
+    public void ShowCustomer()
+   {
+       ArrayList<Customer> CustomerList = getCustomerList();
 
+       DefaultTableModel model = (DefaultTableModel)jTable_ViewC.getModel();
+
+       Object[] row = new Object[2];
+       
+       for(int i = 0; i < CustomerList.size(); i++)
+       {
+           
+           row[0] = CustomerList.get(i).getName();
+           row[1] = CustomerList.get(i).getTotal();
+           
+           model.addRow(row);
+           
+       }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -65,11 +93,13 @@ public class ViewOrder extends javax.swing.JFrame {
         jTextField_ID = new javax.swing.JTextField();
         jTextField_Item = new javax.swing.JTextField();
         jTextField_Quantity = new javax.swing.JTextField();
-        jTextField_Status = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable_ViewOrder = new javax.swing.JTable();
         jButton_Pre = new javax.swing.JButton();
         jButton_Finish = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable_ViewC = new javax.swing.JTable();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -103,33 +133,77 @@ public class ViewOrder extends javax.swing.JFrame {
             }
         });
 
-        jTextField_Status.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_StatusActionPerformed(evt);
-            }
-        });
-
         jTable_ViewOrder.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Item", "Quantity", "Status"
+                "ID", "Item", "Quantity", "Status", "Customer Name"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_ViewOrder.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable_ViewOrderMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable_ViewOrder);
 
         jButton_Pre.setText("Preparing");
+        jButton_Pre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_PreActionPerformed(evt);
+            }
+        });
 
         jButton_Finish.setText("Finished");
+        jButton_Finish.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_FinishActionPerformed(evt);
+            }
+        });
+
+        jTable_ViewC.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Customer Name", "Total Item"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_ViewC.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable_ViewCMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(jTable_ViewC);
+
+        jLabel5.setText("jLabel5");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane3))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel2)
@@ -141,19 +215,20 @@ public class ViewOrder extends javax.swing.JFrame {
                             .addComponent(jTextField_Item, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField_ID, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField_Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField_Status, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton_Pre)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton_Finish)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jButton_Finish, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton_Pre, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -168,15 +243,18 @@ public class ViewOrder extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField_Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jTextField_Status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton_Pre, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton_Finish, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(41, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton_Pre, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton_Finish, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(35, 35, 35)
+                                .addComponent(jLabel4)))
+                        .addGap(28, 28, 28)
+                        .addComponent(jLabel5)))
+                .addContainerGap())
         );
 
         pack();
@@ -194,9 +272,100 @@ public class ViewOrder extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField_QuantityActionPerformed
 
-    private void jTextField_StatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_StatusActionPerformed
+    private void jTable_ViewOrderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_ViewOrderMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_StatusActionPerformed
+        int i = jTable_ViewOrder.getSelectedRow();
+        
+        TableModel model = jTable_ViewOrder.getModel();
+        
+         // Display Slected Row In JTexteFields
+        jTextField_ID.setText(model.getValueAt(i,0).toString());
+
+        jTextField_Item.setText(model.getValueAt(i,1).toString());
+
+        jTextField_Quantity.setText(model.getValueAt(i,2).toString());
+        
+        jLabel5.setText(model.getValueAt(i, 4).toString());
+
+    }//GEN-LAST:event_jTable_ViewOrderMouseClicked
+
+    private void jButton_PreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_PreActionPerformed
+        // TODO add your handling code here:
+        int i = jTable_ViewOrder.getSelectedRow();
+        String id = jTextField_ID.getText();
+        String item = jTextField_Item.getText();
+        String quantity=jTextField_Quantity.getText();
+        String name = jLabel5.getText();
+        String status = "prepare";
+        String[] row4 = {id, item, quantity, status, name};
+        
+        DefaultTableModel model = (DefaultTableModel)jTable_ViewOrder.getModel();
+        
+        model.removeRow(i);
+        model.addRow(row4);
+        
+    }//GEN-LAST:event_jButton_PreActionPerformed
+
+    private void jTable_ViewCMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_ViewCMouseClicked
+        // TODO add your handling code here:
+        int i = jTable_ViewC.getSelectedRow();
+        TableModel model = jTable_ViewC.getModel();
+
+        jLabel5.setText(model.getValueAt(i,0).toString());
+         ArrayList<Order> OrderList = getOrderList();
+
+        DefaultTableModel model2 = (DefaultTableModel)jTable_ViewOrder.getModel();
+
+       Object[] row = new Object[5];
+       /*int rowCount = model2.getRowCount();
+        for (int k = rowCount - 1; k >= 0; i--) {
+            model2.removeRow(k);
+        }*/
+       if(jLabel5.getText()=="Alex"){
+           model2.setRowCount(0);
+           for(int j = 0; j < 2; j++)
+       {
+           
+           row[0] = OrderList.get(j).getId();
+           row[1] = OrderList.get(j).getItem();
+           row[2] = OrderList.get(j).getQuantity();
+           row[4] = OrderList.get(j).getCname();
+           
+           model2.addRow(row);
+           
+       }
+       }
+       else if(jLabel5.getText()=="Bob"){
+         model2.setRowCount(0);
+           for(int l=2; l < 3; l++)
+       {
+           
+           row[0] = OrderList.get(l).getId();
+           row[1] = OrderList.get(l).getItem();
+           row[2] = OrderList.get(l).getQuantity();
+           row[4] = OrderList.get(l).getCname();
+           
+           model2.addRow(row);
+           
+       }
+        }
+    }//GEN-LAST:event_jTable_ViewCMouseClicked
+
+    private void jButton_FinishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_FinishActionPerformed
+        // TODO add your handling code here:
+        int i = jTable_ViewOrder.getSelectedRow();
+        String id = jTextField_ID.getText();
+        String item = jTextField_Item.getText();
+        String quantity=jTextField_Quantity.getText();
+        String name = jLabel5.getText();
+        String status = "Finish";
+        String[] row4 = {id, item, quantity, status, name};
+        
+        DefaultTableModel model = (DefaultTableModel)jTable_ViewOrder.getModel();
+        
+        model.removeRow(i);
+        model.addRow(row4);
+    }//GEN-LAST:event_jButton_FinishActionPerformed
 
     /**
      * @param args the command line arguments
@@ -240,11 +409,13 @@ public class ViewOrder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTable_ViewC;
     private javax.swing.JTable jTable_ViewOrder;
     private javax.swing.JTextField jTextField_ID;
     private javax.swing.JTextField jTextField_Item;
     private javax.swing.JTextField jTextField_Quantity;
-    private javax.swing.JTextField jTextField_Status;
     // End of variables declaration//GEN-END:variables
 }
