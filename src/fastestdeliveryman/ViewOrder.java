@@ -5,9 +5,14 @@
  */
 package fastestdeliveryman;
 
-import java.util.ArrayList;
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.mail.internet.MimeMessage;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
 
 /**
  *
@@ -53,10 +58,10 @@ public class ViewOrder extends javax.swing.JFrame {
            row[0] = OrderList.get(i).getId();
            row[1] = OrderList.get(i).getItem();
            row[2] = OrderList.get(i).getQuantity();
+           row[3] = OrderList.get(i).getStatus();
            row[4] = OrderList.get(i).getCname();
            
-           model.addRow(row);
-           
+           model.addRow(row);   
        }
     }
     public void ShowCustomer()
@@ -65,7 +70,7 @@ public class ViewOrder extends javax.swing.JFrame {
 
        DefaultTableModel model = (DefaultTableModel)jTable_ViewC.getModel();
 
-       Object[] row = new Object[2];
+       Object[] row = new Object[3];
        
        for(int i = 0; i < CustomerList.size(); i++)
        {
@@ -100,6 +105,7 @@ public class ViewOrder extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable_ViewC = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
+        jButton_Send = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -186,14 +192,23 @@ public class ViewOrder extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable_ViewC.setColumnSelectionAllowed(true);
         jTable_ViewC.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable_ViewCMouseClicked(evt);
             }
         });
         jScrollPane3.setViewportView(jTable_ViewC);
+        jTable_ViewC.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
         jLabel5.setText("jLabel5");
+
+        jButton_Send.setText("Alert Delivery Man");
+        jButton_Send.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_SendActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -222,6 +237,10 @@ public class ViewOrder extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton_Send)
+                .addGap(139, 139, 139))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,8 +249,7 @@ public class ViewOrder extends javax.swing.JFrame {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(jTextField_ID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -253,8 +271,11 @@ public class ViewOrder extends javax.swing.JFrame {
                                 .addGap(35, 35, 35)
                                 .addComponent(jLabel4)))
                         .addGap(28, 28, 28)
-                        .addComponent(jLabel5)))
-                .addContainerGap())
+                        .addComponent(jLabel5))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton_Send)
+                .addGap(21, 21, 21))
         );
 
         pack();
@@ -359,13 +380,55 @@ public class ViewOrder extends javax.swing.JFrame {
         String quantity=jTextField_Quantity.getText();
         String name = jLabel5.getText();
         String status = "Finish";
-        String[] row4 = {id, item, quantity, status, name};
+        String[] row = {id, item, quantity, status, name};
         
         DefaultTableModel model = (DefaultTableModel)jTable_ViewOrder.getModel();
         
         model.removeRow(i);
-        model.addRow(row4);
+        model.addRow(row);
     }//GEN-LAST:event_jButton_FinishActionPerformed
+
+    private void jButton_SendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_SendActionPerformed
+        // TODO add your handling code here:
+        try{
+            String host ="smtp.gmail.com" ;
+            String user = "woocs-wa13@student.tarc.edu.my";
+            String pass = "cheesheng1995";
+            String to = "woocheesheng@gmail.com ";
+            String from = "woocs-wa13@student.tarc.edu.my";
+            String subject = "FastestDeliveryMan";
+            String messageText = "Test email";
+            boolean sessionDebug = false;
+
+            Properties props = System.getProperties();
+
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.host", host);
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.required", "true");
+
+            java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+            Session mailSession = Session.getDefaultInstance(props, null);
+            mailSession.setDebug(sessionDebug);
+            Message msg = new MimeMessage(mailSession);
+            msg.setFrom(new InternetAddress(from));
+            InternetAddress[] address = {new InternetAddress(to)};
+            msg.setRecipients(Message.RecipientType.TO, address);
+            msg.setSubject(subject); msg.setSentDate(new Date());
+            msg.setText(messageText);
+
+           Transport transport=mailSession.getTransport("smtp");
+           transport.connect(host, user, pass);
+           transport.sendMessage(msg, msg.getAllRecipients());
+           transport.close();
+           
+           JOptionPane.showMessageDialog(null, "send successfully");
+        }catch(Exception ex)
+        {
+            JOptionPane.showMessageDialog(null ,ex);
+        }
+    }//GEN-LAST:event_jButton_SendActionPerformed
 
     /**
      * @param args the command line arguments
@@ -405,6 +468,7 @@ public class ViewOrder extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_Finish;
     private javax.swing.JButton jButton_Pre;
+    private javax.swing.JButton jButton_Send;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
